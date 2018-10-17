@@ -1,0 +1,232 @@
+<div class="content-wrapper">
+
+  <div class="row">
+
+    <div class="box box-default">
+
+      <div class="box-body">
+        <app-sinner-form class="col-xs-3"></app-sinner-form>
+        <div class="col-xs-6"> <input id="txtSearchSinner" type="text" class="form-control" (keydown)="onKeydownHandler($event)"
+            [(ngModel)]="searchSinnerIdentifier" placeholder="Enter ID# or Passport ID#" required appAutofocus></div>
+        <div class="col-xs-3"><button id="btnSearchSinner" type="button" class="btn btn-block btn-primary" (click)="searchSinnerHandler()"
+            [disabled]="!searchSinnerIdentifier">Search</button></div>
+      </div>
+
+    </div>
+
+  </div>
+  <div id="msgNotFound" *ngIf="foundSinnerIdentifier == 'notfound'" style="padding-bottom: 10px;"><span class="label label-warning">Not
+      Found</span></div>
+  <div class="row" *ngFor="let foundSinner of foundSinners;let index = index;">
+
+    <swal #saveSinnerNameSwal title="Save name?" text="Update name?" [showCancelButton]="true" (confirm)="saveSinnerNameHandler(index, foundSinner)">
+    </swal>
+    <swal #saveSinnerNotesSwal title="Save notes?" text="Update notes?" [showCancelButton]="true" (confirm)="saveSinnerNotesHandler(index, foundSinner)">
+    </swal>
+    <swal #deleteSinnerSwal title="Forgive sin?" text="Are you so kind to pardon this sin?" [showCancelButton]="true"
+      (confirm)="deleteSinnerHandler(index, foundSinner)">
+    </swal>
+
+    <!-- /.col -->
+    <div id="sinContainer{{index}}" class="col-md-12">
+      <div class="box box-default">
+        <div class="box-header with-border">
+          <h3 class="box-title"><span class="label label-danger">sin</span></h3>
+
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+          <!-- /.box-tools -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+
+          <div class="row">
+
+            <div class="col-md-12">
+
+              <label for="foundSinnerIdentifier">Identifier</label>
+              <input type="text" class="form-control" id="foundSinnerIdentifier" [ngModel]="foundSinnerIdentifier"
+                readonly>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 10px;">
+
+
+            <label class="col-md-12" for="txtFoundSinnerName{{index}}">Name&nbsp;&nbsp;<span id="successMatchSinnerName{{index}}"
+                *ngIf="stateCheckSinnerNames[index]=='yes'" class="label label-primary"><i class="fa fa-check"
+                  aria-hidden="true"></i></span>
+              <span id="warningMatchSinnerName{{index}}" *ngIf="stateCheckSinnerNames[index]=='no'" class="label label-warning"><i
+                  class="fa fa-exclamation" aria-hidden="true"></i></span>
+            </label>
+
+
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-9">
+
+              <input type="text" class="form-control col-md-11" id="txtFoundSinnerName{{index}}" [(ngModel)]="updatedSinnerNames[index]"
+                placeholder="_masked_ (type if you know it)">
+
+            </div>
+
+            <div class="col-md-2">
+
+
+              <button type="button" class="btn btn-default" id="btnCheckSinnerName{{index}}" (click)="checkSinnerNameHandler(index)"
+                [disabled]="!updatedSinnerNames[index]">Check
+                Name&nbsp;&nbsp;<i class="fa fa-check"></i></button>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 5px;">
+
+            <div class="col-md-2">
+
+              <button *ngIf="!stateEditSinnerNames[index]" type="button" class="btn btn-default pull-left" id="btnEditSinnerName{{index}}"
+                (click)="enterStateChangeSinnerName(index)">Edit
+                Name&nbsp;&nbsp;<i class="fa fa-free-code-camp"></i></button>
+              <button *ngIf="stateEditSinnerNames[index]" type="button" class="btn btn-primary pull-left" id="btnSaveSinnerName{{index}}"
+                [disabled]="!updatedSinnerNames[index]" [swal]="saveSinnerNameSwal">Save Name&nbsp;&nbsp;<i class="fa fa-free-code-camp"></i></button>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 10px;">
+
+            <label class="col-md-12" for="txtFoundSinnerNotes{{index}}">Notes</label>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+
+              <textarea class="form-control" id="txtFoundSinnerNotes{{index}}" [(ngModel)]="foundSinner.notes"
+                [disabled]="!stateEditSinnerNotes[index]"></textarea>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 5px;">
+
+            <div class="col-md-2">
+
+              <button *ngIf="!stateEditSinnerNotes[index]" type="button" class="btn btn-default pull-left" id="btnEditSinnerNotes{{index}}"
+                (click)="enterStateChangeSinnerNotes(index)">Edit
+                Notes&nbsp;&nbsp;<i class="fa fa-free-code-camp"></i></button>
+              <button *ngIf="stateEditSinnerNotes[index]" type="button" class="btn btn-primary pull-left" id="btnSaveSinnerNotes{{index}}"
+                [disabled]="!foundSinner.notes" [swal]="saveSinnerNotesSwal">Save Notes&nbsp;&nbsp;<i class="fa fa-free-code-camp"></i></button>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 10px;">
+
+            <label class="col-md-12" for="foundSinnerDate">Sin Date</label>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+
+              <input type="text" class="form-control" id="foundSinnerDate" #dp="bsDatepicker" bsDatepicker [bsConfig]="{ dateInputFormat: 'LL', containerClass: 'theme-default' }"
+                [ngModel]="foundSinner.sinDate" [isDisabled]="true">
+            </div>
+
+          </div>
+
+          <div class="row" style="padding-top: 5px;">
+
+            <div class="col-md-3" *ngIf="!foundSinner.isPrescripted(prescriptionPeriod)">
+
+              <button id="btnDeleteSinner{{index}}" type="button" class="btn btn-default pull-left" [swal]="deleteSinnerSwal">Delete
+                Sin&nbsp;&nbsp;<i class="fa fa-eraser"></i></button>
+
+            </div>
+
+
+            <div class="col-md-3" *ngIf="foundSinner.isPrescripted(prescriptionPeriod)">
+
+              <button id="btnDeleteSinner{{index}}" type="button" class="btn btn-primary pull-left" [swal]="deleteSinnerSwal">Delete
+                Prescripted Sin&nbsp;&nbsp;<i class="fa fa-eraser"></i></button>
+
+            </div>
+
+          </div>
+
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- /.col -->
+
+
+  </div>
+  <div class="row">
+
+    <div class="col-xs-12">
+
+      <div class="box box-default">
+
+        <div class="box-body table-responsive no-padding">
+
+          <table id="tableSins" class="table table-hover table-sortable">
+            <thead>
+              <tr>
+                <th>Identifier</th>
+                <th>Name</th>
+                <th>Notes</th>
+                <th id="columnHeaderSortBySinDate" class="{{orderDirection}}" (click)="sort()">Sin Date</th>
+                <th>Time Elapsed</th>
+                <th>Prescripted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sinner of sinnersVisibleOnCurrentPage">
+                <td><em>_masked_</em></td>
+                <td><em>_masked_</em></td>
+                <td>{{ sinner.notes }}</td>
+                <td>{{ sinner.sinDate }}</td>
+                <td>{{ sinner.timeElapsed() }}</td>
+                <td>{{ sinner.prescripted(prescriptionPeriod) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div id="msgNoData" *ngIf="sinnersAll?.length==0" class="box-footer clearfix">
+          No Data
+        </div>
+        <div *ngIf="sinnersAll?.length>0 && currentPage==-1" class="box-footer clearfix">
+          <strong id="totalCount">Total:&nbsp;{{sinnersAll.length}} sins</strong>
+        </div>
+
+        <div *ngIf="currentPage>0" class="box-footer clearfix">
+          <span id="showingCount" class="pull-left">Showing {{ startItem + 1}} to {{ endItem }} of
+            {{sinnersAll.length}} sins</span>
+          <pagination class="pagination pagination-sm no-margin pull-right" [totalItems]="sinnersAll.length"
+            (pageChanged)="pageChanged($event)" [(ngModel)]="currentPage"></pagination>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

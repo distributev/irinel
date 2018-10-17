@@ -1,0 +1,73 @@
+<div class="content-wrapper">
+
+  <div class="row" *ngIf="prescriptedSinnersAll?.length > 0">
+
+    <swal #giveAmnestySwal title="Forgive prescripted sins?" text="Are you so kind to give an amnesty for all prescripted sins?"
+      [showCancelButton]="true" (confirm)="giveAmnesty()">
+    </swal>
+
+    <div class="box box-default">
+
+      <div class="box-body">
+        <div class="col-xs-4"><button id="btnGiveAmnesty" type="button" class="btn btn-block btn-primary" [swal]="giveAmnestySwal">Remove
+            All Prescripted
+            Sins&nbsp;&nbsp;<i class="fa fa-hand-peace-o"></i></button></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-xs-12">
+
+      <div class="box box-default">
+
+        <div class="box-body table-responsive no-padding">
+
+          <table id="tableSins" class="table table-hover table-sortable">
+            <thead>
+              <tr>
+                <th>Identifier</th>
+                <th>Name</th>
+                <th>Notes</th>
+                <th id="columnHeaderSortBySinDate" class="{{orderDirection}}" (click)="sort()">Sin Date</th>
+                <th>Time Elapsed</th>
+                <th>Prescripted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sinner of prescriptedSinnersVisibleOnCurrentPage">
+                <td><em>_masked_</em></td>
+                <td><em>_masked_</em></td>
+                <td>{{ sinner.notes }}</td>
+                <td>{{ sinner.sinDate }}</td>
+                <td>{{ sinner.timeElapsed() }}</td>
+                <td>{{ sinner.prescripted(prescriptionPeriod) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div id="msgNoData" *ngIf="prescriptedSinnersAll?.length==0" class="box-footer clearfix">
+          No Data
+        </div>
+        <div *ngIf="prescriptedSinnersAll?.length>0 && currentPage==-1" class="box-footer clearfix">
+          <strong id="totalCount">Total:&nbsp;{{prescriptedSinnersAll.length}} sins</strong>
+        </div>
+
+        <div *ngIf="currentPage>0" class="box-footer clearfix">
+          <span id="showingCount" class="pull-left">Showing {{ startItem + 1}} to {{ endItem }} of
+            {{prescriptedSinnersAll.length}}
+            entries</span>
+          <pagination class="pagination pagination-sm no-margin pull-right" [totalItems]="prescriptedSinnersAll.length"
+            (pageChanged)="pageChanged($event)" [(ngModel)]="currentPage"></pagination>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
